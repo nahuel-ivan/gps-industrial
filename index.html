@@ -7,76 +7,157 @@
 <title>GPS Industrial - Stellantis</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{
- font-family:Arial,sans-serif;
- background:#f1f3f5;
- color:#20252b;
- padding:20px;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
-.container{
- max-width:480px;
- margin:25px auto;
- background:white;
- padding:25px;
- border-radius:16px;
- box-shadow:0 5px 20px #0001;
+
+body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background: #f1f3f5;
+    color: #20252b;
+    padding: 20px;
 }
-.header{text-align:center;margin-bottom:25px}
-.header h1{font-size:25px;color:#183b63}
-.header p{color:#777;margin-top:7px}
-label{display:block;font-weight:bold;margin:18px 0 7px}
-input{
- width:100%;padding:14px;border:1px solid #ccc;
- border-radius:9px;font-size:16px;
+
+.container {
+    max-width: 480px;
+    margin: 25px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px #0001;
 }
-button{
- width:100%;padding:15px;border:0;border-radius:9px;
- font-size:16px;font-weight:bold;cursor:pointer;margin-top:18px;
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
 }
-#start{background:#1769aa;color:white}
-#stop{background:#d93025;color:white}
-button:disabled{opacity:.45;cursor:not-allowed}
-.status{
- margin-top:20px;padding:14px;border-radius:9px;
- background:#eee;text-align:center;font-weight:bold;
+
+.header h1 {
+    font-size: 25px;
+    color: #183b63;
+    letter-spacing: 1px;
 }
-.info{margin-top:18px;line-height:1.8;font-size:14px}
-.small{font-size:12px;color:#777;text-align:center;margin-top:20px}
+
+.header p {
+    color: #777;
+    margin-top: 7px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 18px 0 7px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 9px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+#start {
+    background: #1769aa;
+    color: white;
+}
+
+#stop {
+    background: #d93025;
+    color: white;
+}
+
+button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.status {
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 9px;
+    background: #eee;
+    text-align: center;
+    font-weight: bold;
+}
+
+.info {
+    margin-top: 18px;
+    line-height: 1.9;
+    font-size: 14px;
+}
+
+.small {
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.5;
+}
 </style>
 </head>
 
 <body>
+
 <div class="container">
- <div class="header">
-  <h1>STELLANTIS</h1>
-  <p>GPS de Autoelevadores</p>
- </div>
 
- <label for="vehicle">Identificación del autoelevador</label>
- <input id="vehicle" placeholder="Ej: AUTOELEVADOR 01">
+    <div class="header">
+        <h1>STELLANTIS</h1>
+        <p>GPS de Autoelevadores</p>
+    </div>
 
- <label for="operator">Nombre del operario (opcional)</label>
- <input id="operator" placeholder="Ingresar nombre">
+    <label for="vehicle">Identificación del autoelevador</label>
+    <input id="vehicle" placeholder="Ej: AUTOELEVADOR 01">
 
- <button id="start" onclick="iniciar()">INICIAR GPS</button>
- <button id="stop" onclick="detener()" disabled>DETENER GPS</button>
+    <label for="operator">Nombre del operario (opcional)</label>
+    <input id="operator" placeholder="Ingresar nombre">
 
- <div class="status" id="status">GPS detenido</div>
+    <button id="start" onclick="iniciar()">INICIAR GPS</button>
+    <button id="stop" onclick="detener()" disabled>DETENER GPS</button>
 
- <div class="info">
-  <div>📍 Precisión GPS: <span id="accuracy">--</span></div>
-  <div>🚀 Velocidad: <span id="speed">--</span></div>
-  <div>🕒 Última actualización: <span id="last">--</span></div>
- </div>
+    <div class="status" id="status">
+        GPS detenido
+    </div>
 
- <p class="small">
-  Mantené esta página abierta mientras el autoelevador esté trabajando.
- </p>
+    <div class="info">
+        <div>📍 Precisión GPS: <span id="accuracy">--</span></div>
+        <div>🚀 Velocidad: <span id="speed">--</span></div>
+        <div>🕒 Última actualización: <span id="last">--</span></div>
+        <div>📱 Pantalla: <span id="screenStatus">Normal</span></div>
+    </div>
+
+    <p class="small">
+        Mantené esta página abierta mientras el autoelevador esté trabajando.
+        La pantalla permanecerá encendida mientras el GPS esté activo y la página visible.
+    </p>
+
 </div>
 
 <script>
+
+// ======================================
+// CONFIGURACIÓN DEL SERVIDOR
+// ======================================
+
 const WS_URL = "wss://gps-industrial-servidor.onrender.com/ws";
+
+// ======================================
+// VARIABLES
+// ======================================
 
 let socket = null;
 let watchId = null;
@@ -84,157 +165,396 @@ let ultimaPosicion = null;
 let activo = false;
 let timer = null;
 let reconectando = false;
+let wakeLock = null;
+
+// ======================================
+// ELEMENTOS
+// ======================================
 
 const $ = id => document.getElementById(id);
 
-function estado(texto){
- $("status").textContent = texto;
+// ======================================
+// ESTADO
+// ======================================
+
+function estado(texto) {
+    $("status").textContent = texto;
 }
 
-function conectar(){
- return new Promise((resolve,reject)=>{
-  socket = new WebSocket(WS_URL);
+// ======================================
+// MANTENER PANTALLA ENCENDIDA
+// ======================================
 
-  socket.onopen = ()=>{
-   reconectando = false;
-   estado("Conectado al servidor. Buscando GPS...");
-   resolve();
-  };
+async function mantenerPantallaEncendida() {
 
-  socket.onerror = ()=>{
-   reject(new Error("No se pudo conectar al servidor"));
-  };
+    try {
 
-  socket.onclose = ()=>{
-   if(activo){
-    estado("Conexión perdida. Reconectando...");
-    setTimeout(async ()=>{
-     if(!activo || reconectando)return;
-     reconectando = true;
-     try{
-      await conectar();
-      if(ultimaPosicion)enviarPosicion(ultimaPosicion);
-     }catch(e){
-      reconectando = false;
-     }
-    },3000);
-   }
-  };
+        if (!("wakeLock" in navigator)) {
+            $("screenStatus").textContent = "No compatible";
+            return;
+        }
 
-  socket.onmessage = event=>{
-   try{
-    const data = JSON.parse(event.data);
-    if(data.type === "error"){
-     estado(data.message || "Error del servidor");
+        if (document.visibilityState !== "visible") {
+            return;
+        }
+
+        if (wakeLock) {
+            return;
+        }
+
+        wakeLock = await navigator.wakeLock.request("screen");
+
+        $("screenStatus").textContent = "Encendida";
+
+        wakeLock.addEventListener("release", () => {
+
+            wakeLock = null;
+
+            if (!activo) {
+                $("screenStatus").textContent = "Normal";
+            }
+
+        });
+
+    } catch (error) {
+
+        console.log("Error Wake Lock:", error);
+        $("screenStatus").textContent = "No disponible";
+
     }
-   }catch(e){}
-  };
- });
+
 }
 
-function enviarPosicion(pos){
- if(!socket || socket.readyState !== WebSocket.OPEN)return;
+// ======================================
+// LIBERAR PANTALLA
+// ======================================
 
- socket.send(JSON.stringify({
-  type:"position",
-  vehicleId:$("vehicle").value.trim().toUpperCase(),
-  operator:$("operator").value.trim(),
-  lat:pos.coords.latitude,
-  lng:pos.coords.longitude,
-  accuracy:pos.coords.accuracy,
-  speed:pos.coords.speed,
-  gpsTime:new Date(pos.timestamp).toISOString()
- }));
+async function liberarPantalla() {
+
+    if (wakeLock) {
+
+        try {
+            await wakeLock.release();
+        } catch (error) {
+            console.log(error);
+        }
+
+        wakeLock = null;
+    }
+
+    $("screenStatus").textContent = "Normal";
+
 }
 
-async function iniciar(){
- const vehicle = $("vehicle").value.trim();
+// ======================================
+// RECUPERAR PANTALLA AL VOLVER
+// ======================================
 
- if(!vehicle){
-  alert("Ingresá la identificación del autoelevador");
-  return;
- }
+document.addEventListener("visibilitychange", async () => {
 
- if(!navigator.geolocation){
-  alert("Este navegador no permite utilizar GPS");
-  return;
- }
+    if (document.visibilityState === "visible" && activo) {
 
- if(!window.isSecureContext){
-  alert("La página debe abrirse mediante HTTPS");
-  return;
- }
+        await mantenerPantallaEncendida();
 
- $("start").disabled = true;
- estado("Conectando al servidor...");
+        if (ultimaPosicion) {
+            enviarPosicion(ultimaPosicion);
+        }
 
- try{
-  await conectar();
-  activo = true;
+    }
 
-  watchId = navigator.geolocation.watchPosition(pos=>{
-   ultimaPosicion = pos;
-   enviarPosicion(pos);
+});
 
-   $("accuracy").textContent = Math.round(pos.coords.accuracy)+" metros";
-   $("speed").textContent = pos.coords.speed == null
-    ? "No disponible"
-    : (pos.coords.speed*3.6).toFixed(1)+" km/h";
+// ======================================
+// CONECTAR CON RENDER
+// ======================================
 
-   $("last").textContent = new Date().toLocaleTimeString();
-   estado("GPS ACTIVO - Ubicación enviada");
-  },err=>{
-   estado("Error GPS: "+err.message);
-  },{
-   enableHighAccuracy:true,
-   maximumAge:2000,
-   timeout:20000
-  });
+function conectar() {
 
-  timer = setInterval(()=>{
-   if(socket && socket.readyState === WebSocket.OPEN){
-    socket.send(JSON.stringify({type:"ping"}));
-    if(ultimaPosicion)enviarPosicion(ultimaPosicion);
-   }
-  },5000);
+    return new Promise((resolve, reject) => {
 
-  $("stop").disabled = false;
+        socket = new WebSocket(WS_URL);
 
- }catch(error){
-  estado("No se pudo conectar. Revisá Internet e intentá nuevamente.");
-  $("start").disabled = false;
-  if(socket)socket.close();
- }
+        socket.onopen = () => {
+
+            reconectando = false;
+
+            estado("Conectado al servidor. Buscando GPS...");
+
+            resolve();
+
+        };
+
+        socket.onerror = () => {
+
+            reject(new Error("No se pudo conectar al servidor"));
+
+        };
+
+        socket.onclose = () => {
+
+            if (activo) {
+
+                estado("Conexión perdida. Reconectando...");
+
+                setTimeout(async () => {
+
+                    if (!activo || reconectando) return;
+
+                    reconectando = true;
+
+                    try {
+
+                        await conectar();
+
+                        if (ultimaPosicion) {
+                            enviarPosicion(ultimaPosicion);
+                        }
+
+                    } catch (error) {
+
+                        reconectando = false;
+
+                    }
+
+                }, 3000);
+
+            }
+
+        };
+
+        socket.onmessage = event => {
+
+            try {
+
+                const data = JSON.parse(event.data);
+
+                if (data.type === "error") {
+                    estado(data.message || "Error del servidor");
+                }
+
+            } catch (error) {}
+
+        };
+
+    });
+
 }
 
-function detener(){
- activo = false;
+// ======================================
+// ENVIAR UBICACIÓN
+// ======================================
 
- if(watchId !== null){
-  navigator.geolocation.clearWatch(watchId);
-  watchId = null;
- }
+function enviarPosicion(pos) {
 
- if(timer){
-  clearInterval(timer);
-  timer = null;
- }
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        return;
+    }
 
- if(socket && socket.readyState === WebSocket.OPEN){
-  socket.send(JSON.stringify({type:"stop"}));
-  socket.close();
- }
+    socket.send(JSON.stringify({
 
- socket = null;
- ultimaPosicion = null;
+        type: "position",
 
- $("start").disabled = false;
- $("stop").disabled = true;
- estado("GPS detenido");
- $("accuracy").textContent = "--";
- $("speed").textContent = "--";
- $("last").textContent = "--";
+        vehicleId: $("vehicle").value.trim().toUpperCase(),
+
+        operator: $("operator").value.trim(),
+
+        lat: pos.coords.latitude,
+
+        lng: pos.coords.longitude,
+
+        accuracy: pos.coords.accuracy,
+
+        speed: pos.coords.speed,
+
+        gpsTime: new Date(pos.timestamp).toISOString()
+
+    }));
+
 }
+
+// ======================================
+// INICIAR GPS
+// ======================================
+
+async function iniciar() {
+
+    const vehicle = $("vehicle").value.trim();
+
+    if (!vehicle) {
+
+        alert("Ingresá la identificación del autoelevador");
+
+        return;
+
+    }
+
+    if (!navigator.geolocation) {
+
+        alert("Este navegador no permite utilizar GPS");
+
+        return;
+
+    }
+
+    if (!window.isSecureContext) {
+
+        alert("La página debe abrirse mediante HTTPS");
+
+        return;
+
+    }
+
+    $("start").disabled = true;
+
+    estado("Conectando al servidor...");
+
+    try {
+
+        await conectar();
+
+        activo = true;
+
+        // Mantener pantalla encendida
+        await mantenerPantallaEncendida();
+
+        // Activar seguimiento GPS
+        watchId = navigator.geolocation.watchPosition(
+
+            pos => {
+
+                ultimaPosicion = pos;
+
+                enviarPosicion(pos);
+
+                $("accuracy").textContent =
+                    Math.round(pos.coords.accuracy) + " metros";
+
+                $("speed").textContent =
+                    pos.coords.speed == null
+                    ? "No disponible"
+                    : (pos.coords.speed * 3.6).toFixed(1) + " km/h";
+
+                $("last").textContent =
+                    new Date().toLocaleTimeString();
+
+                estado("GPS ACTIVO - Ubicación enviada");
+
+            },
+
+            error => {
+
+                estado("Error GPS: " + error.message);
+
+            },
+
+            {
+
+                enableHighAccuracy: true,
+
+                maximumAge: 2000,
+
+                timeout: 20000
+
+            }
+
+        );
+
+        // Enviar actualización cada 5 segundos
+        timer = setInterval(() => {
+
+            if (socket && socket.readyState === WebSocket.OPEN) {
+
+                socket.send(JSON.stringify({
+                    type: "ping"
+                }));
+
+                if (ultimaPosicion) {
+                    enviarPosicion(ultimaPosicion);
+                }
+
+            }
+
+        }, 5000);
+
+        $("stop").disabled = false;
+
+    } catch (error) {
+
+        activo = false;
+
+        estado("No se pudo conectar. Revisá Internet e intentá nuevamente.");
+
+        $("start").disabled = false;
+
+        if (socket) {
+            socket.close();
+        }
+
+        await liberarPantalla();
+
+    }
+
+}
+
+// ======================================
+// DETENER GPS
+// ======================================
+
+function detener() {
+
+    activo = false;
+
+    // Detener seguimiento
+    if (watchId !== null) {
+
+        navigator.geolocation.clearWatch(watchId);
+
+        watchId = null;
+
+    }
+
+    // Detener actualizaciones
+    if (timer) {
+
+        clearInterval(timer);
+
+        timer = null;
+
+    }
+
+    // Avisar al servidor
+    if (socket && socket.readyState === WebSocket.OPEN) {
+
+        socket.send(JSON.stringify({
+            type: "stop"
+        }));
+
+        socket.close();
+
+    }
+
+    socket = null;
+
+    ultimaPosicion = null;
+
+    // Liberar pantalla
+    liberarPantalla();
+
+    $("start").disabled = false;
+
+    $("stop").disabled = true;
+
+    estado("GPS detenido");
+
+    $("accuracy").textContent = "--";
+
+    $("speed").textContent = "--";
+
+    $("last").textContent = "--";
+
+}
+
 </script>
+
 </body>
 </html>
