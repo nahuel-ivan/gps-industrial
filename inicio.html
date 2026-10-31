@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPS Industrial | Stellantis</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background: #edf1f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+}
+
+.header {
+    background: #183b63;
+    color: white;
+    padding: 35px 20px;
+    text-align: center;
+    border-radius: 16px;
+    margin-bottom: 22px;
+    box-shadow: 0 5px 15px #0002;
+}
+
+.header h1 {
+    font-size: 30px;
+    letter-spacing: 2px;
+}
+
+.header h2 {
+    font-size: 17px;
+    margin-top: 12px;
+    font-weight: normal;
+}
+
+.header p {
+    font-size: 13px;
+    margin-top: 9px;
+    color: #d5e1ee;
+}
+
+.opcion {
+    display: block;
+    background: white;
+    padding: 25px;
+    margin-bottom: 17px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #20252b;
+    box-shadow: 0 4px 14px #00000012;
+    transition: transform .2s;
+    border: 1px solid #e2e6eb;
+}
+
+.opcion:hover {
+    transform: translateY(-3px);
+}
+
+.icono {
+    font-size: 35px;
+    margin-bottom: 13px;
+}
+
+.opcion h3 {
+    font-size: 19px;
+    margin-bottom: 9px;
+}
+
+.opcion p {
+    color: #667085;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.boton {
+    display: block;
+    padding: 14px;
+    text-align: center;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.operario .boton {
+    background: #1769aa;
+}
+
+.supervisor .boton {
+    background: #183b63;
+}
+
+.footer {
+    text-align: center;
+    color: #89919b;
+    font-size: 12px;
+    margin-top: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>STELLANTIS</h1>
+        <h2>GPS INDUSTRIAL</h2>
+        <p>Sistema de seguimiento de autoelevadores</p>
+    </div>
+
+    <a class="opcion operario"
+       href="index.html">
+
+        <div class="icono">🚜</div>
+
+        <h3>Operarios</h3>
+
+        <p>
+            Ingresá para identificar el autoelevador,
+            iniciar el GPS y compartir su ubicación.
+        </p>
+
+        <span class="boton">
+            INGRESAR COMO OPERARIO
+        </span>
+
+    </a>
+
+    <a class="opcion supervisor"
+       href="monitor.html">
+
+        <div class="icono">📍</div>
+
+        <h3>Supervisores</h3>
+
+        <p>
+            Accedé al mapa en tiempo real y visualizá
+            la ubicación de los autoelevadores activos.
+        </p>
+
+        <span class="boton">
+            ABRIR MONITOR GPS
+        </span>
+
+    </a>
+
+    <div class="footer">
+        GPS INDUSTRIAL · STELLANTIS
+    </div>
+
+</div>
+
+</body>
+</html>
